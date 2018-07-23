@@ -71,7 +71,7 @@ namespace StreamerVLC
             L"AppMain::OnUpdate",
             30.0 /* minimum_time_elapsed_in_milliseconds */);
 
-		HoloLensForCV::SensorType renderSensorType = HoloLensForCV::SensorType::VisibleLightLeftFront;
+		HoloLensForCV::SensorType renderSensorType = HoloLensForCV::SensorType::ShortThrowToFDepth;
 
         //
         // Update scene objects.
@@ -104,13 +104,13 @@ namespace StreamerVLC
 				(HoloLensForCV::SensorType::LongThrowToFReflectivity == renderSensorType))
 			{
 				cameraPreviewExpectedBitmapPixelFormat =
-					Windows::Graphics::Imaging::BitmapPixelFormat::Gray8;
+					Windows::Graphics::Imaging::BitmapPixelFormat::Gray16;
 
 				cameraPreviewTextureFormat =
-					DXGI_FORMAT_R8_UNORM;
+					DXGI_FORMAT_R16_UNORM;
 
 				cameraPreviewPixelStride =
-					1;
+					2;
 			}
 			else
 			{
@@ -139,7 +139,7 @@ namespace StreamerVLC
 
         if (nullptr == _cameraPreviewTexture)
         {
-#if 0
+#if 1
             dbg::trace(
                 L"latestCameraPreviewFrame->SoftwareBitmap->PixelWidth=0x%08x, latestCameraPreviewFrame->SoftwareBitmap->PixelHeight=0x%08x",
                 latestCameraPreviewFrame->SoftwareBitmap->PixelWidth, latestCameraPreviewFrame->SoftwareBitmap->PixelHeight);
@@ -161,7 +161,7 @@ namespace StreamerVLC
             Windows::Graphics::Imaging::SoftwareBitmap^ bitmap =
                 latestCameraPreviewFrame->SoftwareBitmap;
 
-#if 0
+#if 1
             dbg::trace(
                 L"cameraPreviewExpectedBitmapPixelFormat=0x%08x, bitmap->BitmapPixelFormat=0x%08x",
                 cameraPreviewExpectedBitmapPixelFormat, bitmap->BitmapPixelFormat);
@@ -205,6 +205,7 @@ namespace StreamerVLC
     // current application and spatial positioning state.
     void AppMain::OnRender()
     {
+
         // Draw the sample hologram.
         _slateRenderer->Render(
             _cameraPreviewTexture);
@@ -267,16 +268,16 @@ namespace StreamerVLC
         // light cameras.
         //
         enabledSensorTypes.emplace_back(
-            HoloLensForCV::SensorType::VisibleLightLeftLeft);
+            HoloLensForCV::SensorType::ShortThrowToFDepth);
 
         enabledSensorTypes.emplace_back(
-            HoloLensForCV::SensorType::VisibleLightLeftFront);
+            HoloLensForCV::SensorType::LongThrowToFDepth);
 
         enabledSensorTypes.emplace_back(
-            HoloLensForCV::SensorType::VisibleLightRightFront);
+            HoloLensForCV::SensorType::ShortThrowToFReflectivity);
 
         enabledSensorTypes.emplace_back(
-            HoloLensForCV::SensorType::VisibleLightRightRight);
+            HoloLensForCV::SensorType::LongThrowToFReflectivity);
 
         _sensorFrameStreamer =
             ref new HoloLensForCV::SensorFrameStreamer();
