@@ -13,6 +13,9 @@
 
 namespace StreamerVLC
 {
+	// Function type used to map a scanline of pixels to an alternate pixel format.
+	typedef std::function<void(int, byte*, byte*)> TransformScanline;
+
     class AppMain : public Holographic::AppMainBase
     {
     public:

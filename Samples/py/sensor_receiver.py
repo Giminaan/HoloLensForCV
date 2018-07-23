@@ -35,7 +35,7 @@ SensorFrameStreamHeader = namedtuple('SensorFrameStreamHeader',
 # Constants
 # Each port corresponds to a single stream type
 # Port for obtaining Photo Video Camera stream
-PV_STREAM_PORT = 23940
+PV_STREAM_PORT = 23941
 
 def main(argv):
     """ Receiver main"""
@@ -75,6 +75,9 @@ def main(argv):
 
             # read the image in chunks
             image_size_bytes = header.ImageHeight * header.RowStride
+            # Cookie VersionMajor VersionMinor FrameType Timestamp ImageWidth
+            # ImageHeight PixelStride RowStride
+            print 'Cookie : ' + str(header.Cookie) + ', VersionMajor : ' + str(header.VersionMajor) + ', VersionMinor : ' + str(header.VersionMinor) + ', FrameType : ' + str(header.FrameType) +', Timestamp : ' + str(header.Timestamp) + ', ImageWidth : ' + str(header.ImageWidth) + ', ImageHeight : ' + str(header.ImageHeight) + ', PixelStride : ' + str(header.PixelStride) + ', RowStride : ' + str(header.RowStride)
             image_data = ''
 
             while len(image_data) < image_size_bytes:
@@ -87,10 +90,10 @@ def main(argv):
 
             image_array = np.frombuffer(image_data, dtype=np.uint8).reshape((header.ImageHeight,
                                         header.ImageWidth, header.PixelStride))
-            if PROCESS:
+            #if PROCESS:
                 # process image
-                gray = cv2.cvtColor(image_array,cv2.COLOR_BGR2GRAY)
-                image_array = cv2.Canny(gray,50,150,apertureSize = 3)
+            #    gray = cv2.cvtColor(image_array,cv2.COLOR_BGR2GRAY)
+            #    image_array = cv2.Canny(gray,50,150,apertureSize = 3)
 
             cv2.imshow('Photo Video Camera Stream', image_array)
             

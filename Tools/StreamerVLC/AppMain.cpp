@@ -103,14 +103,22 @@ namespace StreamerVLC
 				(HoloLensForCV::SensorType::LongThrowToFDepth == renderSensorType) ||
 				(HoloLensForCV::SensorType::LongThrowToFReflectivity == renderSensorType))
 			{
+				//cameraPreviewExpectedBitmapPixelFormat =
+				//	Windows::Graphics::Imaging::BitmapPixelFormat::Gray16;
+
+				//cameraPreviewTextureFormat =
+				//	DXGI_FORMAT_R16_UNORM;
+
+				//cameraPreviewPixelStride =
+				//	2;
 				cameraPreviewExpectedBitmapPixelFormat =
-					Windows::Graphics::Imaging::BitmapPixelFormat::Gray16;
+					Windows::Graphics::Imaging::BitmapPixelFormat::Bgra8;
 
 				cameraPreviewTextureFormat =
-					DXGI_FORMAT_R16_UNORM;
+					DXGI_FORMAT_B8G8R8A8_UNORM;
 
 				cameraPreviewPixelStride =
-					2;
+					4;
 			}
 			else
 			{
@@ -158,8 +166,11 @@ namespace StreamerVLC
                 _cameraPreviewTexture->MapCPUTexture<void>(
                     D3D11_MAP_WRITE /* mapType */);
 
-            Windows::Graphics::Imaging::SoftwareBitmap^ bitmap =
-                latestCameraPreviewFrame->SoftwareBitmap;
+            /*Windows::Graphics::Imaging::SoftwareBitmap^ bitmap =
+                latestCameraPreviewFrame->SoftwareBitmap;*/
+
+
+			Windows::Graphics::Imaging::SoftwareBitmap^ bitmap = SensorStreaming::FrameRenderer::ConvertDepthToDisplayable(latestCameraPreviewFrame->SoftwareBitmap);
 
 #if 1
             dbg::trace(
@@ -205,7 +216,9 @@ namespace StreamerVLC
     // current application and spatial positioning state.
     void AppMain::OnRender()
     {
-
+		// apply pseudo color
+		//SensorStreaming::FrameRenderer::TransformBitmap();
+		
         // Draw the sample hologram.
         _slateRenderer->Render(
             _cameraPreviewTexture);
